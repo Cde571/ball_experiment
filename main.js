@@ -22,6 +22,12 @@ let rect2X = (canvas.width - rectWidth) / 2 + rectWidth;
 let rect2Y = (canvas.height - rectHeight) / 2;
 let rect2SpeedX = 5;
 
+let rect3Width = 75;
+let rect3Height = 50;
+let rect3X = (canvas.width - rectWidth) / 2 + rectWidth;
+let rect3Y = (canvas.height - rectHeight) / 2;
+
+
 // Métodos de la pelota
 function drawBall() {
     ctx.beginPath();
@@ -35,12 +41,18 @@ function drawBall() {
 function drawRect() {
     ctx.beginPath();
     ctx.rect(rectX, rectY, rectWidth, rectHeight);
-    ctx.fillStyle = "orange";
+    ctx.fillStyle = "green";
     ctx.fill();
     ctx.closePath();
 
     ctx.beginPath();
     ctx.rect(rect2X, rect2Y, rect2Width, rect2Height);
+    ctx.fillStyle = "green";
+    ctx.fill();
+    ctx.closePath();
+
+    ctx.beginPath();    
+    ctx.rect(rect3X, rect3Y, rect3Width, rect3Height);
     ctx.fillStyle = "green";
     ctx.fill();
     ctx.closePath();
@@ -80,13 +92,20 @@ function draw() {
             rectX += rectSpeedX;
         }
     });
-  
+   
     
     
     rect2X += rect2SpeedX;  
     if (rect2X + rect2Width > canvas.width || rect2X < 0) {
         rect2SpeedX = -rect2SpeedX;
     }
+
+    
+    
+
+    
+    
+
 
     requestAnimationFrame(draw);
 }
