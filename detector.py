@@ -15,6 +15,7 @@ desired_height = 50
 # Initialize trace variables
 crossing_counter = 0 # to crossing_counter
 previous_center_x = 25 # To store the previous center position
+bg_subtractor = cv2.createBackgroundSubtractorMOG2()
 
 while cap.isOpened():
     ret, frame = cap.read()
@@ -24,6 +25,7 @@ while cap.isOpened():
 
     # Resize the frame to the new dimensions
     frame = cv2.resize(frame, new_dimensions)
+    fg_mask = bg_subtractor.apply(frame)
     # Convert the frame to HSV format
     imghsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
@@ -75,8 +77,8 @@ while cap.isOpened():
         center_y = y + h // 2
 
         # Check if the area of the contour is greater than 500
-        if cv2.contourArea(contour) > 500:
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 255), 1)
+        if cv2.contourArea(contour) > 100:
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (10, 255, 255), 1)
 
             # Check if the object is completely inside the desired rectangle
             if (
@@ -84,18 +86,21 @@ while cap.isOpened():
                     desired_position[1] <= center_y <= desired_position[1] + desired_height
             ):
                 # Check if the object has crossed the line
-                if center_x is not None and previous_center_x < 400 and center_x > 460:
+                if center_x is not None and previous_center_x < 200 and center_x > 150:
+                    previous_center_x +=10
+                    previous_center_y = center_y
                     crossing_counter += 1 # Increment the crossing counter
 
         # Update the previous position of the center
         previous_center_x = center_x
 
+
     # Show the cross counter in the frame
     cv2.putText(frame, f"Crossings: {crossing_counter}", (10, 30), cv2.FONT_HERSHEY_PLAIN, 1.5, (0, 0, 0), 2)
     cv2.imshow('Detected Objects', frame)
-
+    
     if cv2.waitKey(25) & 0xFF == ord('q'):
         break
-
+fg_mask = bg_subtractor.apply(frame)
 cap.release()
 cv2.destroyAllWindows()
