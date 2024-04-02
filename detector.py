@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-video_path = "C:\\Users\\caco2\\Desktop\\Sin título.mp4"
+video_path = "pelota.mp4"
 cap = cv2.VideoCapture(video_path)
 
 # Define the new desired dimensions for the video
@@ -45,7 +45,7 @@ while cap.isOpened():
 
     # Define red color range in HSV format
     redlow = np.array([0, 100, 100], np.uint8)
-    redhigh = np.array([40, 255, 255], np.uint8)
+    redhigh = np.array([10, 255, 255], np.uint8)
 
     # Create a mask for red objects
     mask_red = cv2.inRange(imghsv, redlow, redhigh)
@@ -63,7 +63,7 @@ while cap.isOpened():
     dilated_mask = cv2.dilate(combined_mask, kernel, iterations=1)
 
     # Show the frame with the dilated mask applied
-    cv2.imshow('Detected Objects with Dilated Masks', masked_frame)
+    cv2.imshow('Detected Objects with Dilated Masks', cv2.resize(masked_frame, (300, 300)))
 
     # Find contours in the dilated mask
     contours, _ = cv2.findContours(dilated_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -94,13 +94,19 @@ while cap.isOpened():
         # Update the previous position of the center
         previous_center_x = center_x
 
-
     # Show the cross counter in the frame
     cv2.putText(frame, f"Crossings: {crossing_counter}", (10, 30), cv2.FONT_HERSHEY_PLAIN, 1.5, (0, 0, 0), 2)
-    cv2.imshow('Detected Objects', frame)
+    cv2.imshow('Detected Objects', cv2.resize(frame, (300, 300)))
     
+
+    # Show individual color masks with white color and black background
+    cv2.imshow('Yellow Mask', cv2.resize(cv2.bitwise_not(mask_yellow), (300, 300)))
+    cv2.imshow('Green Mask', cv2.resize(cv2.bitwise_not(mask_green), (300, 300)))
+    cv2.imshow('Red Mask', cv2.resize(cv2.bitwise_not(mask_red), (300, 300)))
+
     if cv2.waitKey(25) & 0xFF == ord('q'):
         break
+
 fg_mask = bg_subtractor.apply(frame)
 cap.release()
 cv2.destroyAllWindows()
